@@ -47,7 +47,7 @@ class Allegrito(Widget):
             driver = webdriver.Chrome(self.driver_path.text)
             driver.get(self.link.text)
             time.sleep(2)
-            QuestionsModule.Select_language(driver,self.link)
+            QuestionsModule.Select_language(driver,self.link.text)
         except Exception as e:
             print(e)
 
