@@ -1,0 +1,117 @@
+<FloatLayout>
+
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source:"images/background.jpg"
+<TextInput>
+    multiline: False
+    size_hint: (1,None)
+    height: 30
+
+<Label>
+    color: 0,0,0,1
+
+<CheckBox>
+    color: 0,0,0,1
+
+<Button>
+    size_hint : (None, None)
+    width: 100
+    height: 30
+    color: 1,1,1,1
+    background_color: 170/255.0,227/255.0,244/255.0,1
+
+<Allegrito>
+    driver_path: drive_path
+    questionnaire: questionnaire
+    link: link
+    kiosk: kiosk
+    FloatLayout:
+        size: root.width, root.height
+        Label:
+            text: "ALLEGRITO"
+            font_size: 40
+            color: 7/255.0,167/255.0,199/255.0,1
+            pos_hint:{'y':0.4}
+            font_name: 'Tuffy'
+        GridLayout:
+            cols:1
+            rows:6
+            spacing: 20
+            size_hint: (.8, None)
+            height: 280
+            pos_hint: {"x":(root.width*0.1/root.width),"top":0.8}
+
+            TextInput:
+                hint_text: 'Survey Link'
+                multiline: False
+                id: link
+
+            GridLayout:
+                cols: 2
+                spacing: 5,0
+
+                TextInput:
+                    hint_text: 'Chrome Driver'
+                    id: drive_path
+
+                Button:
+                    text: "Browse"
+                    on_press: root.browse_driver()
+
+
+            GridLayout:
+                cols: 2
+                spacing: 5,0
+
+                TextInput:
+                    hint_text: 'Questionnaire File'
+                    id: questionnaire
+
+
+                Button:
+                    text: "Browse"
+                    on_press: root.browse_questionnaire()
+
+            GridLayout:
+                cols: 4
+                spacing: 5,0
+                Label:
+                    text: 'Kiosk'
+
+
+                CheckBox:
+
+                Label:
+                    text: 'Preview'
+
+                CheckBox:
+
+
+            GridLayout:
+                cols: 2
+                spacing: 5,0
+                TextInput:
+                    hint_text: 'Kiosk IDs File'
+                    id: kiosk
+                    multiline: False
+                Button:
+                    size_hint_x : None
+                    width: 100
+                    text: "Browse"
+                    on_press: root.browse_kiosk()
+
+        Button:
+            text: "Run"
+            size_hint: (None,None)
+            width: 100
+            pos_hint: {'center_x': 0.5,'y':0.2}
+            on_press: root.run()
+            height: 30
+
+
+
+
+
