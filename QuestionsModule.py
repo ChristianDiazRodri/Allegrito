@@ -41,10 +41,10 @@ def FindQuestions (driver,sheet):
 
     print(clicked_options)
     welcome_text=website.find("div", {"class": "welcomeContainer"})
-    welcome_text=welcome_text.find("div", {"class": "text"}).text
+    welcome_text=welcome_text.find("div", {"class": "text"}).get_text(separator=" ").strip()
     print(welcome_text)
     pause_text=website.find(id="PausePage")
-    pause_text=pause_text.find("div", {"class": "text"}).text
+    pause_text=pause_text.find("div", {"class": "text"}).get_text(separator=" ").strip()
     print(pause_text)
     sheet.write(0,0,welcome_text)
     sheet.write(1,0,pause_text)
@@ -122,3 +122,6 @@ def Fill_Survey(driver,sheet):
     submit_text=WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "text"))).text
     print(submit_text)
     sheet.write(2,0,submit_text)
+
+def Compare_files():
+    pd.ExcelFile('Survey_Link_Questionnaire.xls')
