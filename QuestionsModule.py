@@ -8,11 +8,17 @@ from xlwt import Workbook
 import time
 import os
 
-def FindQuestions (driver,sheet):
+def FindQuestions (driver,sheet,page):
     clicked_options=[]
     questions_df = pd.DataFrame(columns=['Name','ID','Value','Title'])
     website = bs(driver.page_source, 'html.parser')
     form = website.find('form')
+    all_forms=website.findAll("div", {"class": "survey-page "})
+    q_per_page=[]
+    for f in all_forms:
+        question_text = f.find_all('label', {"class": 'question-label'})
+        q_per_page.append(len(question_text))
+
     questions = form.find_all('input')
     question_text= form.find_all('label',{"class" : 'question-label'})
     no_questions=len(question_text)
@@ -59,7 +65,7 @@ def FindQuestions (driver,sheet):
         for option in question_options['Title']:
             sheet.write(i+3, k, option)
             k+=1
-    return clicked_options
+    return clicked_options,q_per_page
 
 '''
     english_language = pd.DataFrame(columns=['Text','Number'])
@@ -79,7 +85,7 @@ def Select_language (driver,link):
     languages_list = website.find_all('button', attrs={'data-action':"selectLanguage"})
     wb = Workbook()
     if languages_list != [] :
-        languages_list = languages_list[:-1]
+        languages_list = languages_list
         for language in languages_list:
             sheet = wb.add_sheet(language['name'])
             WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, language['id']))).click()
@@ -89,6 +95,7 @@ def Select_language (driver,link):
             time.sleep(2)
             WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.TAG_NAME, "button")))
             time.sleep(2)
+
     else:
         sheet = wb.add_sheet("English")
         Fill_Survey(driver, sheet)
@@ -98,26 +105,44 @@ def Select_language (driver,link):
 
 
 def Fill_Survey(driver,sheet):
-
+    page=0
     submit = "/html/body/div[2]/main/div[2]/div/div/form/div[2]/div/div/div[2]/a[2]"
     time.sleep(2)
-    button_list = FindQuestions(driver,sheet)
+    button_list,q_per_page = FindQuestions(driver, sheet, page)
     continue_btn = '/html/body/div[2]/main/div[2]/div/div/form/div[1]/div/div/div/div[3]/a[2]'
     continue_btn = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, continue_btn)))
+    survey_pages=driver.find_elements_by_class_name('survey-page')
+    find_continues = driver.find_elements_by_tag_name("a")
+    continue_buttons=[]
+    for element in find_continues:
+        if element.text == "CONTINUE":
+            continue_buttons.append(element)
+    print(continue_buttons)
     continue_btn.location_once_scrolled_into_view
     continue_btn.click()
 
-    for button in button_list:
-        print('The button is')
-        print(button)
-        test = '// *[ @ id = "q_77480_101"]'
+    i=0
+    for n in q_per_page:
+        print(n)
+        for k in range(n):
+            print('The button is')
+            print(button_list[i])
+            test = '// *[ @ id = "q_77480_101"]'
+            checkbox = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                (By.ID, button_list[i])))
+            time.sleep(0.5)
+            # checkbox.find_element_by_xpath('..').click()
+            checkbox = WebDriverWait(checkbox, 10).until(EC.visibility_of_element_located((By.XPATH, ('..')))).click()
+            i=i+1
+        find_continues = driver.find_elements_by_tag_name("a")
+        for element in find_continues:
+            if element.text == "CONTINUE":
+                element.click()
 
-        checkbox = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-            (By.ID, button)))
-        time.sleep(0.5)
-        # checkbox.find_element_by_xpath('..').click()
-        checkbox = WebDriverWait(checkbox, 10).until(EC.visibility_of_element_located((By.XPATH, ('..')))).click()
-    submit = driver.find_element_by_xpath(submit).click()
+    find_continues = driver.find_elements_by_tag_name("a")
+    for element in find_continues:
+        if element.text == "SUBMIT":
+            element.click()
     time.sleep(2)
     submit_text=WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "text"))).text
     print(submit_text)
