@@ -1,6 +1,5 @@
 # Allegrito
 
-Objectives
 Main Objective:
 
 Create an application that allows to automate Allegro process to and reduce errors and time spent in surveys.
