@@ -38,7 +38,7 @@ class Allegrito(Widget):
     def browse_driver(self):
         try:
             self.driver_path.text = filechooser.open_file(title="Pick an Excel file file..",
-                                 filters=[("Excel file", "*.xlsx")])[0]
+                                 filters=[("Excel file", "*.exe")])[0]
         except:
             pass
 
